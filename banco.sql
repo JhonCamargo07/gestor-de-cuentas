@@ -50,6 +50,32 @@ CREATE TABLE `cuenta` (
   `ESTADO` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `IDUSUARIO` int(11) NOT NULL FOREGEING KEY,
+  `LOGIN` varchar(50) NOT NULL,
+  `PASSWORD` varchar(20) NOT NULL,
+  `ROL` varchar(10) NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+--
+-- Estructura de tabla para la tabla `ROL`
+--
+
+CREATE TABLE `usuario` (
+  `IDUSUARIO` int(11) NOT NULL FOREGEING KEY,
+  `LOGIN` varchar(50) NOT NULL,
+  `PASSWORD` varchar(20) NOT NULL,
+  `ROL` varchar(10) NOT NULL,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Índices para tablas volcadas
 --
@@ -68,6 +94,8 @@ ALTER TABLE `cliente`
 ALTER TABLE `cuenta`
   ADD PRIMARY KEY (`IDCUENTA`),
   ADD UNIQUE KEY `NUMEROCTA` (`NUMEROCTA`);
+
+
 
 --
 -- Restricciones para tablas volcadas
