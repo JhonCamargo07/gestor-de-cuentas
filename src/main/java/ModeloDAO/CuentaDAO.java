@@ -73,22 +73,47 @@ public class CuentaDAO extends Conexion {
             mensajero = puente.executeQuery();
 
             if (mensajero.next()) {
-                
-               ultimoid = Integer.parseInt(mensajero.getString(1));
-            
+
+                ultimoid = Integer.parseInt(mensajero.getString(1));
+
             }
 
-            }catch (SQLException e) {
+        } catch (SQLException e) {
             Logger.getLogger(CuentaDAO.class.getName()).log(Level.SEVERE, null, e);
-        } //
-            finally {
+        } finally {
             try {
                 this.close();
             } catch (Exception e) {
                 Logger.getLogger(CuentaDAO.class.getName()).log(Level.SEVERE, null, e);
             }
         }
-            return ultimoid;
+        return ultimoid;
+    }
+
+    public CuentaVO consultarCuenta(String estado) throws SQLException {
+
+        CuentaVO cuentaVO = null;
+
+        try {
+            conn = this.getConnection();
+
+            sql = "SELECT * FROM cuenta WHERE ESTADO=?";
+            puente = conn.prepareStatement(sql);
+            puente.setString(1, estado);
+            mensajero = puente.executeQuery();
+
+            while (mensajero.next()) {
+
+                cuentaVO = new CuentaVO(mensajero.getString("IDCUENTA"), mensajero.getString("NUMEROCTA"), mensajero.getString("TITULAR"), mensajero.getString("SALDO"), mensajero.getString("FECHAAPERTURA"), mensajero.getString("ESTADO"));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(CuentaDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            //Sentencia para que independientemnte de lo que pase haga eso
+            this.close();
         }
+        return cuentaVO;
 
     }
+
+}

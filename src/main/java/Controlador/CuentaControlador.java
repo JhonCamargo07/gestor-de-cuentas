@@ -61,8 +61,12 @@ public class CuentaControlador extends HttpServlet {
         switch (opcion) {
             case 1:
                 //Agrgar Cuenta
+                
+                int idcuenta1=cuentadao.agregarCuenta();
 
-                if (cuentadao.agregarCuenta() > 0) {
+                if (idcuenta1 > 0) {
+                    
+                    
 
                     request.setAttribute("mensajeExito", "La cuenta se registro ");
 
