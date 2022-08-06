@@ -36,8 +36,8 @@ public class ClienteDAO extends Conexion {
             conn = this.getConnection();
             puente = conn.prepareStatement(sql);
             mensajero = puente.executeQuery();
-            
-            while (mensajero.next()){
+
+            while (mensajero.next()) {
                 clienteVo = new ClienteVO(mensajero.getString(1), mensajero.getString(2), mensajero.getString(3), mensajero.getString(4), mensajero.getString(5), mensajero.getString(6));
                 clientes.add(clienteVo);
             }
@@ -45,14 +45,14 @@ public class ClienteDAO extends Conexion {
             operacionExitosa = false;
             System.out.println("Ocurrió un error: " + ex.toString());
             Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally {
+        } finally {
             this.close(conn);
         }
 
         return clientes;
 
     }
-    
+
     public ClienteVO selectById(String id) {
         ClienteVO clienteVo = null;
 
@@ -63,22 +63,48 @@ public class ClienteDAO extends Conexion {
             puente = conn.prepareStatement(sql);
             puente.setString(1, id);
             mensajero = puente.executeQuery();
-            
-            if (mensajero.next()){
-                clienteVo = new ClienteVO(mensajero.getString(1),mensajero.getString(2),mensajero.getString(3),mensajero.getString(4),mensajero.getString(5), mensajero.getString(6));
+
+            if (mensajero.next()) {
+                clienteVo = new ClienteVO(mensajero.getString(1), mensajero.getString(2), mensajero.getString(3), mensajero.getString(4), mensajero.getString(5), mensajero.getString(6));
             }
         } catch (SQLException ex) {
             operacionExitosa = false;
             System.out.println("Ocurrió un error: " + ex.toString());
             Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally {
+        } finally {
             this.close(conn);
         }
 
         return clienteVo;
 
     }
-    
+
+    // Método para saber si un usuario ya se encuentra registrado
+    public boolean clienteYaExiste(String cedula) {
+        sql = "SELECT * FROM cliente WHERE CEDULACLIENTE = ?";
+
+        try {
+            conn = this.getConnection();
+            puente = conn.prepareStatement(sql);
+            puente.setString(1, cedula);
+            mensajero = puente.executeQuery();
+
+            if (mensajero.next()) {
+                // Si entra al if es porque si existe
+                operacionExitosa = true;
+            }
+        } catch (SQLException ex) {
+            operacionExitosa = false;
+            System.out.println("Ocurrió un error: " + ex.toString());
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            // Cerramos la conexion
+            this.close(conn);
+        }
+
+        return operacionExitosa;
+    }
+
     public boolean Insert(ClienteVO clienteVo) {
 
         sql = "INSERT INTO cliente VALUES (null, ?,?,?,?,?)";
@@ -92,18 +118,43 @@ public class ClienteDAO extends Conexion {
             puente.setString(4, clienteVo.getIdCuenta());
             puente.setString(5, clienteVo.getIdUsuario());
             puente.executeUpdate();
-            
+
             operacionExitosa = true;
-           
+
         } catch (SQLException ex) {
             operacionExitosa = false;
             System.out.println("Ocurrió un error al registrar el cliente: " + ex.toString());
             Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }finally {
+        } finally {
             this.close(conn);
         }
 
         return operacionExitosa;
+    }
+    
+    public boolean update(ClienteVO clienteVo) {
 
+        sql = "UPDATE cliente SET cedulacliente = ?, nombre = ?, telefono = ? = WHERE idcliente = ?";
+
+        try {
+            conn = this.getConnection();
+            puente = conn.prepareStatement(sql);
+            puente.setString(1, clienteVo.getCedulaCliente());
+            puente.setString(2, clienteVo.getNombreCliente());
+            puente.setString(3, clienteVo.getTelefonoCliente());
+            puente.setString(4, clienteVo.getIdCliente());
+            puente.executeUpdate();
+
+            operacionExitosa = true;
+
+        } catch (SQLException ex) {
+            operacionExitosa = false;
+            System.out.println("Ocurrió un error al actualizar el cliente: " + ex.toString());
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            this.close(conn);
+        }
+
+        return operacionExitosa;
     }
 }

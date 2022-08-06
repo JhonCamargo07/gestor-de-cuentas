@@ -73,22 +73,72 @@ public class CuentaDAO extends Conexion {
             mensajero = puente.executeQuery();
 
             if (mensajero.next()) {
-                
-               ultimoid = Integer.parseInt(mensajero.getString(1));
-            
+
+                ultimoid = Integer.parseInt(mensajero.getString(1));
+
             }
 
-            }catch (SQLException e) {
+        } catch (SQLException e) {
             Logger.getLogger(CuentaDAO.class.getName()).log(Level.SEVERE, null, e);
         } //
-            finally {
+        finally {
             try {
                 this.close();
             } catch (Exception e) {
                 Logger.getLogger(CuentaDAO.class.getName()).log(Level.SEVERE, null, e);
             }
         }
-            return ultimoid;
+        return ultimoid;
+    }
+
+    // Método para saber si un usuario ya se encuentra registrado
+    public boolean cuentaYaExiste(String numCuenta) {
+        sql = "SELECT * FROM cuenta WHERE NUMEROCTA = ?";
+
+        try {
+            conn = this.getConnection();
+            puente = conn.prepareStatement(sql);
+            puente.setString(1, numCuenta);
+            mensajero = puente.executeQuery();
+
+            if (mensajero.next()) {
+                // Si entra al if es porque si existe
+                operacionExitosa = true;
+            }
+        } catch (SQLException ex) {
+            operacionExitosa = false;
+            System.out.println("Ocurrió un error: " + ex.toString());
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            // Cerramos la conexion
+            this.close(conn);
         }
 
+        return operacionExitosa;
     }
+    
+    public boolean update() {
+
+        sql = "UPDATE cuenta SET estado = ? WHERE idcuenta = ?";
+
+        try {
+            conn = this.getConnection();
+            puente = conn.prepareStatement(sql);
+            puente.setString(1, estado);
+            puente.setString(2, idCuenta);
+            puente.executeUpdate();
+
+            operacionExitosa = true;
+
+        } catch (SQLException ex) {
+            operacionExitosa = false;
+            System.out.println("Ocurrió un error al actualizar la cuenta: " + ex.toString());
+            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            this.close(conn);
+        }
+
+        return operacionExitosa;
+    }
+
+}

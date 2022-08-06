@@ -1,6 +1,3 @@
-<%@page import="java.util.List"%>
-<%@page import="ModeloDAO.ClienteDAO"%>
-<%@page import="ModeloVO.ClienteVO" %>
 <!DOCTYPE html>
 <html>
     <head>

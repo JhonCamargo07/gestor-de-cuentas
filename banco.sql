@@ -1,26 +1,20 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generación: 05-08-2022 a las 15:56:05
--- Versión del servidor: 10.4.24-MariaDB
--- Versión de PHP: 8.1.6
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Base de datos: `banco`
 --
 
+CREATE DATABASE banco;
+USE banco;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `administrador`
+--
+
+CREATE TABLE `administrador` (
+  `IDADMIN` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `IDUSUARIO` int(11) NOT NULL
+);
 -- --------------------------------------------------------
 
 --
@@ -28,13 +22,13 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `cliente` (
-  `IDCLIENTE` int(11) NOT NULL,
-  `CEDULACLIENTE` varchar(15) NOT NULL,
+  `IDCLIENTE` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `CEDULACLIENTE` varchar(15) NOT NULL UNIQUE,
   `NOMBRE` varchar(50) NOT NULL,
   `TELEFONO` double NOT NULL,
-  `IDCUENTA` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+  `IDCUENTA` int(11) NOT NULL,
+  `IDUSUARIO` int(11) NOT NULL
+);
 -- --------------------------------------------------------
 
 --
@@ -42,14 +36,13 @@ CREATE TABLE `cliente` (
 --
 
 CREATE TABLE `cuenta` (
-  `IDCUENTA` int(11) NOT NULL,
+  `IDCUENTA` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `NUMEROCTA` varchar(50) NOT NULL,
   `TITULAR` varchar(20) NOT NULL,
   `SALDO` double NOT NULL,
-  `FECHAAPERTURA` varchar(20) NOT NULL,
+  `FECHAAPERTURA` DATE NOT NULL,
   `ESTADO` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+);
 
 -- --------------------------------------------------------
 
@@ -58,56 +51,43 @@ CREATE TABLE `cuenta` (
 --
 
 CREATE TABLE `usuario` (
-  `IDUSUARIO` int(11) NOT NULL FOREGEING KEY,
+  `IDUSUARIO` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `LOGIN` varchar(50) NOT NULL,
   `PASSWORD` varchar(20) NOT NULL,
-  `ROL` varchar(10) NOT NULL,
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `IDROL` int(11) NOT NULL
+);
+
+CREATE TABLE `rol` (
+  `IDROL` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `NOMBRE` varchar(50) NOT NULL
+);
 
 
---
--- Estructura de tabla para la tabla `ROL`
---
-
-CREATE TABLE `usuario` (
-  `IDUSUARIO` int(11) NOT NULL FOREGEING KEY,
-  `LOGIN` varchar(50) NOT NULL,
-  `PASSWORD` varchar(20) NOT NULL,
-  `ROL` varchar(10) NOT NULL,
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `cliente`
---
-ALTER TABLE `cliente`
-  ADD PRIMARY KEY (`IDCLIENTE`),
-  ADD UNIQUE KEY `CEDULACLIENTE` (`CEDULACLIENTE`),
-  ADD KEY `IDCUENTA` (`IDCUENTA`);
-
---
--- Indices de la tabla `cuenta`
---
-ALTER TABLE `cuenta`
-  ADD PRIMARY KEY (`IDCUENTA`),
-  ADD UNIQUE KEY `NUMEROCTA` (`NUMEROCTA`);
+ALTER table administrador 
+ADD CONSTRAINT administrador_usuario
+FOREIGN KEY (IDUSUARIO)
+REFERENCES USUARIO(IDUSUARIO);
 
 
+ALTER table cliente 
+ADD CONSTRAINT cliente_usuario
+FOREIGN KEY (IDUSUARIO)
+REFERENCES USUARIO(IDUSUARIO);
 
---
--- Restricciones para tablas volcadas
---
 
---
--- Filtros para la tabla `cliente`
---
-ALTER TABLE `cliente`
-  ADD CONSTRAINT `IDCUENTA` FOREIGN KEY (`IDCUENTA`) REFERENCES `cuenta` (`IDCUENTA`);
-COMMIT;
+ALTER table cliente 
+ADD CONSTRAINT cliente_cuenta
+FOREIGN KEY (IDCUENTA)
+REFERENCES cuenta(idcuenta);
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+ALTER table usuario 
+ADD CONSTRAINT usuario_rol
+FOREIGN KEY (IDROL)
+REFERENCES rol(idROL);
+
+
+INSERT INTO `cuenta`(`NUMEROCTA`, `TITULAR`, `SALDO`, `FECHAAPERTURA`, `ESTADO`) VALUES ('123','Prueba','3120000', now(),'Abierta');
+
+INSERT INTO `usuario` (`IDUSUARIO`, `LOGIN`, `PASSWORD`, `IDROL`) VALUES (NULL, 'Prueba', '123', '1');
+
+INSERT INTO `cliente`(`CEDULACLIENTE`, `NOMBRE`, `TELEFONO`, `IDCUENTA`, `IDUSUARIO`) VALUES ('1234567890', 'Prueba','3124561245', 1,1)
